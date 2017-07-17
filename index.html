@@ -22,7 +22,6 @@
 
 		var bird;
 		var platforms;
-		var cursors;
 		var beers;
 		var arrow;
 		var catchBird = false;
@@ -54,8 +53,6 @@
 	    game.physics.arcade.enable(bird);
 
 	    bird.body.gravity.y = 300;
-	    bird.body.collideWorldBounds = true;
-
 			bird.anchor.set(0.5);
 	    bird.body.collideWorldBounds = true;
 	    bird.body.bounce.set(0.5);
@@ -79,8 +76,6 @@
 	    }
 
 			scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-	    cursors = game.input.keyboard.createCursorKeys();
-
 		}
 
 		function update() {
@@ -90,15 +85,15 @@
 
 			arrow.rotation = game.physics.arcade.angleBetween(arrow, bird);
 
-    if (catchBird) {
-        bird.x = game.input.activePointer.worldX;
-        bird.y = game.input.activePointer.worldY;
+	    if (catchBird) {
+	        bird.x = game.input.activePointer.worldX;
+	        bird.y = game.input.activePointer.worldY;
 
-        arrow.alpha = 1;
-        analog.alpha = 0.5;
-        analog.rotation = arrow.rotation - 3.14 / 2;
-        analog.height = game.physics.arcade.distanceBetween(arrow, bird);
-    }
+	        arrow.alpha = 1;
+	        analog.alpha = 0.5;
+	        analog.rotation = arrow.rotation - 3.14 / 2;
+	        analog.height = game.physics.arcade.distanceBetween(arrow, bird);
+	    }
 
 
 		}
