@@ -20,6 +20,10 @@
 
 		var bird;
 		var platforms;
+		var cursors;
+		var beers;
+		var score = 0;
+		var scoreText;
 
 		function create() {
 			game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -31,12 +35,12 @@
 			ground.scale.setTo(1.07, 1);
 			ground.body.immovable = true;
 
-			bird = game.add.sprite(32, game.world.height - 150, 'bird');
+			bird = game.add.sprite(20, game.world.height - 200, 'bird');
 
 	    game.physics.arcade.enable(bird);
 
 	    bird.body.bounce.y = 0.3;
-	    bird.body.gravity.y = 300;
+	    bird.body.gravity.y = 250;
 	    bird.body.collideWorldBounds = true;
 
 			beers = game.add.group();
@@ -50,13 +54,42 @@
 				beer.body.collideWorldBounds = true;
 	    }
 
-
+			scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+	    cursors = game.input.keyboard.createCursorKeys();
 
 		}
 
 		function update() {
+			game.physics.arcade.collide(bird, platforms);
+	    game.physics.arcade.collide(beers, platforms);
+			game.physics.arcade.overlap(bird, beers, colideAndIncScore, null, this);
 
-		}
+			bird.body.velocity.x = 0;
+
+	    if (cursors.left.isDown) {
+	        bird.body.velocity.x = -150;
+	    } else if (cursors.right.isDown) {
+	        bird.body.velocity.x = 150;
+	    } else{
+	        // bird.animations.stop();
+	        // bird.frame = 4;
+	    }
+
+	    //  Allow the bird to jump if they are touching the ground.
+	    if (cursors.up.isDown && bird.body.touching.down)
+	    {
+	        bird.body.velocity.y = -350;
+	    }
+
+	}
+
+	function colideAndIncScore (bird, beer) {
+
+	    //animate collison between beers and bird
+
+	    score += 10;
+	    scoreText.text = 'Score: ' + score;
+	}
 
 	</script>
 
