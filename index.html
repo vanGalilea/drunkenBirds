@@ -9,7 +9,7 @@
 </head>
 <body>
 	<script type="text/javascript">
-		var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+		var game = new Phaser.Game(750, 560, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 		function preload() {
 			game.load.image('background', 'assets/background.png');
@@ -31,8 +31,8 @@
 
 			platforms = game.add.group();
 			platforms.enableBody = true;
-			var ground = platforms.create(0, game.world.height - 80, 'ground');
-			ground.scale.setTo(1.07, 1);
+			var ground = platforms.create(-10, game.world.height - 70, 'ground');
+
 			ground.body.immovable = true;
 
 			bird = game.add.sprite(20, game.world.height - 200, 'bird');
