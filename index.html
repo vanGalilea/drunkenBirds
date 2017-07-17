@@ -4,9 +4,61 @@
 	<meta charset="UTF-8" />
   <title>Angry Birds</title>
 	<script type="text/javascript" src="js/phaser.min.js"></script>
-	<script type="text/javascript" src="./game.js"></script>
 	<link rel="stylesheet" type="text/css" href="styles.css">
 
 </head>
-<body></body>
+<body>
+	<script type="text/javascript">
+		var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+		function preload() {
+			game.load.image('background', 'assets/background.png');
+			game.load.image('ground', 'assets/platform.png');
+			game.load.image('beer', 'assets/beerbottle.png');
+			game.load.image('bird', 'assets/angrybird.png');
+		}
+
+		var bird;
+		var platforms;
+
+		function create() {
+			game.physics.startSystem(Phaser.Physics.ARCADE);
+			game.add.sprite(0, 0, 'background');
+
+			platforms = game.add.group();
+			platforms.enableBody = true;
+			var ground = platforms.create(0, game.world.height - 80, 'ground');
+			ground.scale.setTo(1.07, 1);
+			ground.body.immovable = true;
+
+			bird = game.add.sprite(32, game.world.height - 150, 'bird');
+
+	    game.physics.arcade.enable(bird);
+
+	    bird.body.bounce.y = 0.3;
+	    bird.body.gravity.y = 300;
+	    bird.body.collideWorldBounds = true;
+
+			beers = game.add.group();
+
+	    beers.enableBody = true;
+
+	    for (var i = 0; i < 4; i++) {
+	      var beer = beers.create(game.world.width-150 - i * 30, game.world.height - 200, 'beer');
+        beer.body.gravity.y = 300;
+	      beer.body.bounce.y = 0.2;
+				beer.body.collideWorldBounds = true;
+	    }
+
+
+
+		}
+
+		function update() {
+
+		}
+
+	</script>
+
+</body>
 </html>
