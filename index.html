@@ -27,17 +27,25 @@
 		var anim;
 		var ground;
 
-		var score = 0;
+		var score = [];
 		var scoreText;
 
 		function create() {
 			game.physics.startSystem(Phaser.Physics.P2JS);
+			game.physics.p2.setImpactEvents(true);
 			game.physics.p2.gravity.y = 300;
-			game.physics.p2.restitution = 1.0;
+			// game.physics.p2.restitution = 1.0;
 
 			game.add.sprite(0, 0, 'background');
 
-			beers = game.add.physicsGroup(Phaser.Physics.P2JS);
+			var birdCollisionGroup = game.physics.p2.createCollisionGroup();
+    	var beerCollisionGroup = game.physics.p2.createCollisionGroup();
+			var groundCollisionGroup = game.physics.p2.createCollisionGroup();
+			game.physics.p2.updateBoundsCollisionGroup();
+
+			beers = game.add.group();
+	    beers.enableBody = true;
+	    beers.physicsBodyType = Phaser.Physics.P2JS;
 
 			for (var i = 0; i < 10; i++) {
 				var beer;
@@ -46,20 +54,25 @@
 				if (i > 6 && i < 9) beer = beers.create(game.world.width-180 - (i - 7) * 30, game.world.height - 330, 'beer');
 				if (i > 8)	beer = beers.create(game.world.width-195, game.world.height - 430, 'beer');
 
-				game.physics.p2.enable(beer);
 				beer.body.setRectangle(20, 80);
-				beer.body.collideWorldBounds = true;
+				beer.body.setCollisionGroup(beerCollisionGroup);
+				beer.body.collides([beerCollisionGroup, groundCollisionGroup, birdCollisionGroup]);
 			}
 
 			ground = game.add.sprite(415, game.world.height - 45, 'ground');
 			ground.scale.setTo(1.06, 1);
 			game.physics.p2.enable(ground);
 			ground.body.static = true;
+			ground.body.setCollisionGroup(groundCollisionGroup);
+			ground.body.collides([beerCollisionGroup, birdCollisionGroup]);
 
-			bird = game.add.sprite(100, game.world.height - 150, 'bird');
+			bird = game.add.sprite(110, game.world.height - 150, 'bird');
 			game.physics.p2.enable(bird);
 			bird.body.setCircle(50);
+			bird.body.setCollisionGroup(birdCollisionGroup);
 			bird.body.collideWorldBounds = true;
+			bird.body.collides(groundCollisionGroup, handleBirdGroundCollision, this);
+			bird.body.collides(beerCollisionGroup, handleBirdBeerCollision, this);
 
 			cannon = game.add.sprite(50, game.world.height - 200, 'cannon', 0);
 	    cannon.scale.set(2);
@@ -72,19 +85,32 @@
 
 			scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
-			cursors = game.input.keyboard.createCursorKeys();
+			fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 		}
 
 		function update() {
-	    if (cursors.right.isDown){
+	    if (fireButton.isDown){
 				anim.play(10, true);
-				bird.body.moveRight(game.rnd.integerInRange(100, 400));
-				bird.body.moveUp(game.rnd.integerInRange(100, 400));
+				bird.body.moveRight(game.rnd.integerInRange(100, 500));
+				bird.body.moveUp(game.rnd.integerInRange(100, 500));
 				anim.play(10, false);
 			}
 
-
 		}
+
+		function handleBirdBeerCollision(bird, beer) {
+			if(beer.id !== score[score.length-1]){
+				console.log(beer.id)
+				score = score.concat(beer.id);
+				scoreText.text = 'Score: ' + score.length * 10;
+			}
+			//play breaking glass sound
+		}
+
+		function handleBirdGroundCollision(bird, ground) {
+			if(bird.x > 150) game.input.destroy()
+		}
+
 
 	</script>
 
