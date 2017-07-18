@@ -63,17 +63,20 @@
 	    bird.events.onInputDown.add(set);
 	    bird.events.onInputUp.add(launch);
 
+			beers = game.add.physicsGroup(Phaser.Physics.ARCADE);
 
-			beers = game.add.group();
+	    for (var i = 0; i < 10; i++) {
+				var beer;
+				if (i < 4) beer = beers.create(game.world.width-150 - i * 30, game.world.height - 200, 'beer');
+				if (i > 3 && i < 7) beer = beers.create(game.world.width-165 - (i - 4) * 30, game.world.height - 400, 'beer');
+				if (i > 6 && i < 9) beer = beers.create(game.world.width-180 - (i - 7) * 30, game.world.height - 600, 'beer');
+				if (i > 8)	beer = beers.create(game.world.width-195, game.world.height - 700, 'beer');
 
-	    beers.enableBody = true;
-
-	    for (var i = 0; i < 4; i++) {
-	      var beer = beers.create(game.world.width-150 - i * 30, game.world.height - 200, 'beer');
-        beer.body.gravity.y = 300;
-	      beer.body.bounce.y = 0.2;
-				beer.body.collideWorldBounds = true;
+				beer.body.gravity.y = game.rnd.integerInRange(200, 300);
+				beer.body.bounce.y = game.rnd.integerInRange(0.2, 0.4);
 	    }
+
+	    beers.setAll('body.collideWorldBounds', true);
 
 			scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 		}
@@ -81,7 +84,8 @@
 		function update() {
 			game.physics.arcade.collide(bird, platforms);
 	    game.physics.arcade.collide(beers, platforms);
-			game.physics.arcade.overlap(bird, beers, colideAndIncScore, null, this);
+			game.physics.arcade.collide(beers);
+			game.physics.arcade.collide(bird, beers, collisionHandler, null, this)
 
 			arrow.rotation = game.physics.arcade.angleBetween(arrow, bird);
 
@@ -103,6 +107,7 @@
 
 	    bird.body.moves = false;
 	    bird.body.velocity.setTo(0, 0);
+			bird.body.allowRotation = true;
 	    arrow.reset(bird.x, bird.y);
 	    analog.reset(bird.x, bird.y);
 		}
@@ -122,13 +127,13 @@
 
 		}
 
-		function colideAndIncScore (bird, beer) {
+		function collisionHandler (bird, beer) {
 
-		    //animate collison between beers and bird
 
 		    score += 10;
 		    scoreText.text = 'Score: ' + score;
 		}
+
 
 	</script>
 
