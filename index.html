@@ -29,110 +29,131 @@
 		var scoreText;
 
 		function create() {
-			game.physics.startSystem(Phaser.Physics.ARCADE);
+			// game.physics.startSystem(Phaser.Physics.ARCADE);
 			game.add.sprite(0, 0, 'background');
 
-			analog = game.add.sprite(200, 450, 'analog');
-			analog.width = 8;
-			analog.rotation = 220;
-			analog.alpha = 0;
-			analog.anchor.setTo(0.5, 0.0);
 
-			arrow = game.add.sprite(200, 450, 'arrow');
-			arrow.anchor.setTo(0.1, 0.5);
-			arrow.alpha = 0;
+			game.physics.startSystem(Phaser.Physics.P2JS);
 
-			platforms = game.add.group();
-			platforms.enableBody = true;
-			var ground = platforms.create(-10, game.world.height - 80, 'ground');
+			game.physics.p2.gravity.y = 100;
+			game.physics.p2.restitution = 1.0;
+
+			// var group = game.add.physicsGroup(Phaser.Physics.P2JS);
+			//
+			// for (var i = 0; i < 32; i++)
+			// {
+			// 	 var ball = group.create(game.world.randomX, game.rnd.between(0, 100), 'ball');
+			// 	 ball.body.setCircle(16);
+			// 	 ball.body.fixedRotation = true;
+			// }
+
+			// var box = game.add.sprite(300, 645 - (95 * i), 'atari');
+      //   game.physics.p2.enable(box);
+      //   box.body.mass = 6;
+      //   // box.body.static = true;
+      //   box.body.setMaterial(boxMaterial);
+
+		 beers = game.add.physicsGroup(Phaser.Physics.P2JS);
+
+		 for (var i = 0; i < 9; i++) {
+			 var beer;
+			 if (i < 4) beer = beers.create(game.world.width-150 - i * 30, game.world.height - 200, 'beer');
+			 if (i > 3 && i < 7) beer = beers.create(game.world.width-165 - (i - 4) * 30, game.world.height - 400, 'beer');
+			 if (i > 6 && i < 9) beer = beers.create(game.world.width-180 - (i - 7) * 30, game.world.height - 600, 'beer');
+			 if (i > 8)	beer = beers.create(game.world.width-195, game.world.height - 700, 'beer');
+
+			game.physics.p2.enable(beer);
+			beer.body.setRectangle(20, 80);
+			beer.body.collideWorldBounds = true;
+		 }
+
+			// analog = game.add.sprite(200, 450, 'analog');
+			// analog.width = 8;
+			// analog.rotation = 220;
+			// analog.alpha = 0;
+			// analog.anchor.setTo(0.5, 0.0);
+			//
+			// arrow = game.add.sprite(200, 450, 'arrow');
+			// arrow.anchor.setTo(0.1, 0.5);
+			// arrow.alpha = 0;
+			//
+			var ground = game.add.sprite(415, game.world.height - 45, 'ground');
 			ground.scale.setTo(1.06, 1);
-			ground.body.immovable = true;
+			game.physics.p2.enable(ground);
+			ground.body.static = true;
 
-			bird = game.add.sprite(100, game.world.height - 200, 'bird');
+			//
+			// bird = game.add.sprite(100, game.world.height - 200, 'bird');
+			//
+	    // game.physics.arcade.enable(bird);
+			//
+	    // bird.body.gravity.y = 300;
+			// bird.anchor.set(0.5);
+	    // bird.body.collideWorldBounds = true;
+	    // bird.body.bounce.set(0.5);
+	    // bird.body.drag.set(20, 20);
+			//
+	    // bird.inputEnabled = true;
+	    // bird.input.start(0, true);
+	    // bird.events.onInputDown.add(set);
+	    // bird.events.onInputUp.add(launch);
 
-	    game.physics.arcade.enable(bird);
 
-	    bird.body.gravity.y = 300;
-			bird.anchor.set(0.5);
-	    bird.body.collideWorldBounds = true;
-	    bird.body.bounce.set(0.5);
-	    bird.body.drag.set(20, 20);
-
-	    bird.inputEnabled = true;
-	    bird.input.start(0, true);
-	    bird.events.onInputDown.add(set);
-	    bird.events.onInputUp.add(launch);
-
-			beers = game.add.physicsGroup(Phaser.Physics.ARCADE);
-
-	    for (var i = 0; i < 10; i++) {
-				var beer;
-				if (i < 4) beer = beers.create(game.world.width-150 - i * 30, game.world.height - 200, 'beer');
-				if (i > 3 && i < 7) beer = beers.create(game.world.width-165 - (i - 4) * 30, game.world.height - 400, 'beer');
-				if (i > 6 && i < 9) beer = beers.create(game.world.width-180 - (i - 7) * 30, game.world.height - 600, 'beer');
-				if (i > 8)	beer = beers.create(game.world.width-195, game.world.height - 700, 'beer');
-
-				beer.body.gravity.y = game.rnd.integerInRange(200, 300);
-				beer.body.bounce.y = game.rnd.integerInRange(0.2, 0.4);
-	    }
-
-	    beers.setAll('body.collideWorldBounds', true);
-
-			scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+			// scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 		}
 
 		function update() {
-			game.physics.arcade.collide(bird, platforms);
-	    game.physics.arcade.collide(beers, platforms);
-			game.physics.arcade.collide(beers);
-			game.physics.arcade.collide(bird, beers, collisionHandler, null, this)
-
-			arrow.rotation = game.physics.arcade.angleBetween(arrow, bird);
-
-	    if (catchBird) {
-	        bird.x = game.input.activePointer.worldX;
-	        bird.y = game.input.activePointer.worldY;
-
-	        arrow.alpha = 1;
-	        analog.alpha = 0.5;
-	        analog.rotation = arrow.rotation - 3.14 / 2;
-	        analog.height = game.physics.arcade.distanceBetween(arrow, bird);
-	    }
+			// game.physics.arcade.collide(bird, platforms);
+	    // game.physics.arcade.collide(beers, platforms);
+			// game.physics.arcade.collide(beers);
+			// game.physics.arcade.collide(bird, beers, collisionHandler, null, this)
+			//
+			// arrow.rotation = game.physics.arcade.angleBetween(arrow, bird);
+			//
+	    // if (catchBird) {
+	    //     bird.x = game.input.activePointer.worldX;
+	    //     bird.y = game.input.activePointer.worldY;
+			//
+	    //     arrow.alpha = 1;
+	    //     analog.alpha = 0.5;
+	    //     analog.rotation = arrow.rotation - 3.14 / 2;
+	    //     analog.height = game.physics.arcade.distanceBetween(arrow, bird);
+	    // }
 
 
 		}
 
-		function set(bird,pointer) {
-	    catchBird = true;
-
-	    bird.body.moves = false;
-	    bird.body.velocity.setTo(0, 0);
-			bird.body.allowRotation = true;
-	    arrow.reset(bird.x, bird.y);
-	    analog.reset(bird.x, bird.y);
-		}
-
-		function launch() {
-
-		    catchBird = false;
-		    bird.body.moves = true;
-
-		    arrow.alpha = 0;
-		    analog.alpha = 0;
-
-		    Xvector = (arrow.x - bird.x) * 3;
-		    Yvector = (arrow.y - bird.y) * 3;
-
-		    bird.body.velocity.setTo(Xvector, Yvector);
-
-		}
-
-		function collisionHandler (bird, beer) {
-
-
-		    score += 10;
-		    scoreText.text = 'Score: ' + score;
-		}
+		// function set(bird,pointer) {
+	  //   catchBird = true;
+		//
+	  //   bird.body.moves = false;
+	  //   bird.body.velocity.setTo(0, 0);
+		// 	bird.body.allowRotation = true;
+	  //   arrow.reset(bird.x, bird.y);
+	  //   analog.reset(bird.x, bird.y);
+		// }
+		//
+		// function launch() {
+		//
+		//     catchBird = false;
+		//     bird.body.moves = true;
+		//
+		//     arrow.alpha = 0;
+		//     analog.alpha = 0;
+		//
+		//     Xvector = (arrow.x - bird.x) * 3;
+		//     Yvector = (arrow.y - bird.y) * 3;
+		//
+		//     bird.body.velocity.setTo(Xvector, Yvector);
+		//
+		// }
+		//
+		// function collisionHandler (bird, beer) {
+		//
+		//
+		//     score += 10;
+		//     scoreText.text = 'Score: ' + score;
+		// }
 
 
 	</script>
