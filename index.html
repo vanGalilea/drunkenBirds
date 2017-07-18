@@ -55,12 +55,12 @@
 
 		 beers = game.add.physicsGroup(Phaser.Physics.P2JS);
 
-		 for (var i = 0; i < 9; i++) {
+		 for (var i = 0; i < 10; i++) {
 			 var beer;
-			 if (i < 4) beer = beers.create(game.world.width-150 - i * 30, game.world.height - 200, 'beer');
-			 if (i > 3 && i < 7) beer = beers.create(game.world.width-165 - (i - 4) * 30, game.world.height - 400, 'beer');
-			 if (i > 6 && i < 9) beer = beers.create(game.world.width-180 - (i - 7) * 30, game.world.height - 600, 'beer');
-			 if (i > 8)	beer = beers.create(game.world.width-195, game.world.height - 700, 'beer');
+			 if (i < 4) beer = beers.create(game.world.width-150 - i * 30, game.world.height - 130, 'beer');
+			 if (i > 3 && i < 7) beer = beers.create(game.world.width-165 - (i - 4) * 30, game.world.height - 230, 'beer');
+			 if (i > 6 && i < 9) beer = beers.create(game.world.width-180 - (i - 7) * 30, game.world.height - 330, 'beer');
+			 if (i > 8)	beer = beers.create(game.world.width-195, game.world.height - 430, 'beer');
 
 			game.physics.p2.enable(beer);
 			beer.body.setRectangle(20, 80);
