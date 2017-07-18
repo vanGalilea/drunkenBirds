@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
-  <title>Angry Birds</title>
+  <title>Drunken Birds</title>
 	<script type="text/javascript" src="js/phaser.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="styles.css">
 
@@ -16,21 +16,23 @@
 			game.load.image('ground', 'assets/platform.png');
 			game.load.image('beer', 'assets/beerbottle.png');
 			game.load.image('bird', 'assets/angrybird.png');
-			game.load.image('arrow', 'assets/arrow.png');
-			game.load.image('analog', 'assets/fusia.png');
+			game.load.spritesheet('cannon', 'assets/cannonRight.png', 100, 100);
 		}
 
+		var cursors;
 		var bird;
-		var ground;
 		var beers;
-		var arrow;
-		var catchBird = false;
+
+		var cannon;
+		var anim;
+		var ground;
+
 		var score = 0;
 		var scoreText;
 
 		function create() {
 			game.physics.startSystem(Phaser.Physics.P2JS);
-			game.physics.p2.gravity.y = 200;
+			game.physics.p2.gravity.y = 300;
 			game.physics.p2.restitution = 1.0;
 
 			game.add.sprite(0, 0, 'background');
@@ -59,29 +61,29 @@
 			bird.body.setCircle(50);
 			bird.body.collideWorldBounds = true;
 
+			cannon = game.add.sprite(50, game.world.height - 200, 'cannon', 0);
+	    cannon.scale.set(2);
+	    cannon.smoothed = false;
+	    anim = cannon.animations.add('shoot');
+
+	    // anim.onStart.add(animationStarted, this);
+	    // anim.onLoop.add(animationLooped, this);
+	    // anim.onComplete.add(animationStopped, this);
+
 			scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
 			cursors = game.input.keyboard.createCursorKeys();
 		}
 
 		function update() {
-				if (cursors.left.isDown)
-	    {
-			bird.body.moveLeft(200);
-	    }
-	    else if (cursors.right.isDown)
-	    {
-			bird.body.moveRight(200);
-	    }
+	    if (cursors.right.isDown){
+				anim.play(10, true);
+				bird.body.moveRight(game.rnd.integerInRange(100, 400));
+				bird.body.moveUp(game.rnd.integerInRange(100, 400));
+				anim.play(10, false);
+			}
 
-	    if (cursors.up.isDown)
-	    {
-	    	bird.body.moveUp(200);
-	    }
-	    else if (cursors.down.isDown)
-	    {
-	        bird.body.moveDown(200);
-	    }
+
 		}
 
 	</script>
